@@ -14,10 +14,12 @@ $(TARGET): $(OBJECTS)
 	$(CC) -c $(CFLAGS_DEBUG) $< -o $@ $(LIBS)
 
 run:
-	./ims
+	./ims 3 1 1 1 2 1 4 2 6
+	./ims 6 1 1 1 4 1 4 4 6
+	./ims 12 1 2 1 8 1 4 8 6
+	./ims 24 1 2 1 16 1 8 16 6
 
 clean:
 	rm src/*.o
 	rm $(TARGET)
 	rm model.out
-
