@@ -5,12 +5,13 @@ using namespace std;
 
 #define POCET_SMEN 1
 #define DELKA_SMENY_MIN (8 * 60)
+#define POCET_LINEK 9
 
 Queue galvanika;
-Store line[9];
+Store line[POCET_LINEK];
 
 //statistiky
-long statistics[9];
+long statistics[POCET_LINEK];
 long vzato_ze_skladu = 0;
 long dokonceno = 0;
 long zmetky = 0;
@@ -56,7 +57,6 @@ public:
     }
 };
 
-//linka = line[5]
 class proces_fotocesta2  : public Process {
 public:
     void Behavior() override {
@@ -67,7 +67,6 @@ public:
         statistics[5]++;
     }
 };
-
 
 class proces_opticke_testovani  : public Process {
 public:
@@ -154,7 +153,7 @@ class Initializer  : public Process {
         // aby na pocatku smeny nebezeli masiny pozdejsich fazi naprazdno
         int delay[] = {0,2,1,1,1,1,1,1,1};
         int amount[] = {0,15, 10,1,12,1,10,15,10};
-        for(int i=1;i<9;i++){
+        for(int i=1;i<POCET_LINEK;i++){
             for(int p=0;p < amount[i];p++){
                 switch(i){
                     case 0:(new proces_zpracovani_materialu)->Activate(delay[i]*p);break;
@@ -174,7 +173,7 @@ class Initializer  : public Process {
     };
 };
 int main(int argc, char **argv) {
-    char const *line_name[9] = {
+    char const *line_name[POCET_LINEK] = {
         "zpracovani materialu",
         "prokoveni",
         "galvanika",
@@ -185,7 +184,8 @@ int main(int argc, char **argv) {
         "CNC",
         "expedice",
     };
-    if(argc != 10){
+
+    if(argc != (POCET_LINEK+1)){
         cout << "v argumetu pozadovana specifikace poctu linek (9) v tomto poradi:\n"
                "zpracovani materialu\n"
                "prokoveni\n"
@@ -198,9 +198,9 @@ int main(int argc, char **argv) {
                "expedice" << endl;
         exit(EXIT_FAILURE);
     }
-    //./ims 3 1 1 1 3 1 4 2 6
+
     int multiplier[] = {1, 10, 20, 30, 1, 50, 4, 2, 1};
-    for(int i=0;i<9;i++){
+    for(int i=0;i<POCET_LINEK;i++){
         long tmp = strtol(argv[i+1],nullptr,10) * multiplier[i];
         if(tmp <= 0){
             cerr << "nevhodna hodnota argumetu "<< i-1 << endl;
@@ -219,37 +219,18 @@ int main(int argc, char **argv) {
     Run();
 
     //statistics
-    for(int i=0;i<9;i++){
+    for(int i=0;i<POCET_LINEK;i++){
         line[i].Output();
         cout << "proces["<<i<<"]:  "<< line_name[i] << " dokonceno: " <<  statistics[i] << endl;
     }
-    cout << "---------------" <<endl;
-    for(int i=8;i>=0;i--){
+    cout << "---------------" << endl;
+    for(int i=POCET_LINEK-1;i>=0;i--){
         cout << statistics[i] << " << ";
     }
     cout << endl;
 
-    cout << "vzato_ze_skladu: " << vzato_ze_skladu * 3 << endl;
+    cout << "vzato ze skladu: " << vzato_ze_skladu * 3 << endl;
     cout << "dokonceno: " << dokonceno << endl;
     cout << "zmetky: " << zmetky << endl;
     return EXIT_SUCCESS;
 }
-
-//            .-~~\
-//           /     \ _
-//           ~x   .-~_)_
-//             ~x".-~   ~-.
-//         _   ( /         \   _
-//        ||   T  o  o     Y  ||
-//       ==:l   l   <       !  I;==
-//          \\   \  .__/   /  //
-//           \\ ,r"-,___.-'r.//
-//            }^ \.( )   _.'//.
-//           /    }~Xi--~  //  \
-//          Y    Y I\ \    "    Y
-//          |    | |o\ \        |
-//          |    l_l  Y T       |
-//          l      "o l_j       !
-//           \                 /
-//    ___,.---^.     o       .^---.._____
-//"~~~          "           ~            ~~~"
