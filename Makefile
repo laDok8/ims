@@ -26,4 +26,4 @@ clean:
 	rm model.out
 
 zip:
-	zip -r 10_xhrmor00_xdokou14.zip src Makefile documentation.pdf
+	zip -r 10_xhrmor00_xdokou14.zip src Makefile dokumentace.pdf
